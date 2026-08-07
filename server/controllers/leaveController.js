@@ -1,5 +1,7 @@
 const Leave = require("../models/Leave");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
+const sendEmail = require("../utils/sendEmail");
 
 
 const applyLeave = async (req, res) => {
@@ -66,11 +68,62 @@ if (existingLeave) {
       reason,
     });
 
+    // Find all admins
+const admins = await User.find({
+  role: "admin",
+  //isActive: true,
+  
+});
+// console.log("ADMINS:", admins);
+
+// Create notification + send email
+for (const admin of admins) {
+  await Notification.create({
+    recipient: admin._id,
+    sender: req.user._id,
+    title: "New Leave Application",
+    message: `${req.user.name} has applied for ${leave.leaveType} from ${new Date(
+      leave.startDate
+    ).toLocaleDateString()} to ${new Date(
+      leave.endDate
+    ).toLocaleDateString()}.`,
+    type: "leave",
+  });
+
+  await sendEmail({
+    email: admin.email,
+    subject: "New Leave Application - Employee Leave Management",
+    message: `
+Hello ${admin.name},
+
+A new leave application has been submitted.
+
+Employee: ${req.user.name}
+Leave Type: ${leave.leaveType}
+Start Date: ${new Date(
+      leave.startDate
+    ).toLocaleDateString()}
+End Date: ${new Date(
+      leave.endDate
+    ).toLocaleDateString()}
+Days: ${leave.days}
+Status: Pending
+
+Please login to the Employee Leave Management system to review this request.
+
+Regards,
+Employee Leave Management System
+    `,
+  });
+}
+
     res.status(201).json({
       success: true,
       message: "Leave Applied Successfully",
       leave,
     });
+
+
 
   } catch (error) {
 
@@ -81,6 +134,7 @@ if (existingLeave) {
 
   }
 };
+
 const getMyLeaves = async (req, res) => {
   try {
 

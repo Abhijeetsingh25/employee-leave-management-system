@@ -146,7 +146,7 @@ function AddEmployeeDialog({ open, handleClose, refresh }) {
             >
               <MenuItem value="employee">Employee</MenuItem>
               <MenuItem value="hr">HR</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
+              {/* <MenuItem value="admin">Admin</MenuItem> */}
             </TextField>
           </Grid>
         </Grid>

@@ -13,6 +13,7 @@ const holidayRoutes = require("./routes/holidayRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const exportRoutes = require("./routes/exportRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const connectDB = require("./config/db");
 
 dotenv.config();
@@ -49,6 +50,8 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/reports", reportRoutes);
 
 app.use("/api/export", exportRoutes);
+
+app.use("/api/notifications",notificationRoutes);
 
 app.use(errorMiddleware);
 

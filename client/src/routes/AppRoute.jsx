@@ -10,6 +10,7 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/admin/Dashboard";
 import EmployeeList from "../pages/admin/EmployeeList";
+import AdminProfile from "../pages/admin/Profile";
 import Attendance from "../pages/admin/Attendance";
 import LeaveManagement from "../pages/admin/LeaveManagement";
 import AdChangePassword from "../components/layout/AdChangePassword";
@@ -66,6 +67,11 @@ function AppRoutes() {
     path="attendance"
     element={<Attendance />}
   />
+
+  <Route
+  path="profile"
+  element={<AdminProfile />}
+/>
 
   <Route
     path="leaves"

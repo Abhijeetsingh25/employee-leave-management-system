@@ -14,6 +14,8 @@ import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
+
 
 import { Link, useLocation } from "react-router-dom";
 
@@ -43,6 +45,12 @@ const menu = [
     icon: <EventNoteIcon />,
     path: "/admin/attendance",
   },
+
+  {
+  title: "Profile",
+  icon: <PersonIcon />,
+  path: "/admin/profile",
+},
   {
     title: "Change Password",
     icon: <LockResetIcon />,

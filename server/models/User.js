@@ -87,6 +87,11 @@ resetPasswordExpire: {
       default: false,
     },
 
+    isPasswordChanged: {
+  type: Boolean,
+  default: false,
+},
+
   },
   {
     timestamps: true,

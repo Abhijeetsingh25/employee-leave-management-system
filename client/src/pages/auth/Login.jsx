@@ -42,15 +42,27 @@ function Login() {
 
       const { data } = await api.post("/auth/login", formData);
 
+      // console.log("LOGIN RESPONSE:", data);
+      // console.log("PASSWORD CHANGED:", data.user.isPasswordChanged);
+
+       localStorage.setItem("user", JSON.stringify(data.user));
       dispatch(loginSuccess(data.user));
 
-      if (data.user.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (data.user.role === "hr") {
-        navigate("/hr/dashboard");
-      }else if(data.user.role === "employee"){
-        navigate("/employee/dashboard");
-      }
+    if (data.user.role === "admin") {
+  navigate("/admin/dashboard");
+
+} else if (data.user.role === "hr") {
+  navigate("/hr/dashboard");
+
+} else if (data.user.role === "employee") {
+
+  if (data.user.isPasswordChanged === false) {
+    navigate("/employee/change-password");
+  } else {
+    navigate("/employee/dashboard");
+  }
+
+}
 
     } catch (error) {
       alert(error.response?.data?.message || "Login Failed");

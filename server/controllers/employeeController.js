@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const sendEmail = require("../utils/sendEmail");
 
 // =======================
 // Create Employee
@@ -46,6 +47,41 @@ const createEmployee = async (req, res) => {
         role,
 
       });
+      try {
+
+  await sendEmail({
+    email: employee.email,
+    subject: "Welcome to Employee Leave Management System",
+    message: `
+Hello ${employee.name},
+
+Welcome to Employee Leave Management System.
+
+Your account has been created successfully.
+
+Login Details
+
+Name : ${employee.name}
+Email : ${employee.email}
+Password : ${password}
+Role : ${employee.role}
+
+Login URL:
+http://localhost:5173
+
+Please change your password after your first login.
+
+Regards,
+HR Department
+Employee Leave Management System
+`,
+  });
+
+} catch (emailError) {
+
+  console.log("Email Error:", emailError.message);
+
+}
 
     res.status(201).json({
 
@@ -71,13 +107,14 @@ const createEmployee = async (req, res) => {
 // =======================
 const getAllEmployees = async (req, res) => {
   try {
-    const employees = await User.find()
+    const employees = await User.find({
+      role: { $ne: "admin" }, // Admin ko exclude karega
+    })
       .select("-password")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
-      count: employees.length,
       employees,
     });
   } catch (error) {

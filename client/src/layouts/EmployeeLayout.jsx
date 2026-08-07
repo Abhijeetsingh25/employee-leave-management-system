@@ -1,49 +1,24 @@
-// import { Box, Toolbar } from "@mui/material";
-// import { Outlet } from "react-router-dom";
 
-// import EmployeeSidebar from "../components/employee/EmployeeSidebar";
-// import EmployeeNavbar from "../components/employee/EmployeeNavbar";
-
-// function EmployeeLayout() {
-
-//   return (
-
-//     <Box sx={{ display: "flex" }}>
-
-//       <EmployeeNavbar />
-
-//       <EmployeeSidebar />
-
-//       <Box
-//         component="main"
-//         sx={{
-//           flexGrow: 1,
-//           p: 3,
-//         }}
-//       >
-
-//         <Toolbar />
-
-//         <Outlet />
-
-//       </Box>
-
-//     </Box>
-
-//   );
-
-// }
-
-// export default EmployeeLayout;
 import { Box, Toolbar } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import EmployeeSidebar from "../components/employee/EmployeeSidebar";
 import EmployeeNavbar from "../components/employee/EmployeeNavbar";
 
 
 function EmployeeLayout() {
+ const user = JSON.parse(localStorage.getItem("user"));
+  const location = useLocation();
 
+  if (
+    user &&
+    !user.isPasswordChanged &&
+    location.pathname !== "/employee/change-password"
+  ) {
+    return <Navigate to="/employee/change-password" replace />;
+  }
   return (
 
     <Box

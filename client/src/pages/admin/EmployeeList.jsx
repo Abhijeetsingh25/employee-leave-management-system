@@ -12,7 +12,12 @@ import {
   TextField,
   Box,
   CircularProgress,
+  Chip,
+  InputAdornment,
 } from "@mui/material";
+
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
 import { DataGrid } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -131,83 +136,170 @@ const handleDelete = async (id) => {
     flex: 1,
   },
   {
-    field: "role",
-    headerName: "Role",
-    flex: 1,
-  },
+  field: "role",
+  headerName: "Role",
+  flex: 1,
+
+  renderCell: (params) => (
+    <Chip
+      label={params.value.toUpperCase()}
+      size="small"
+      color={
+        params.value === "admin"
+          ? "error"
+          : params.value === "hr"
+          ? "warning"
+          : "primary"
+      }
+    />
+  ),
+},
   {
     field: "actions",
     headerName: "Actions",
     flex: 1.5,
     sortable: false,
 
-    renderCell: (params) => (
-      <>
-        <Button
-          size="small"
-          startIcon={<EditIcon />}
-          onClick={() => handleEdit(params.row)}
-        >
-          Edit
-        </Button>
+   renderCell: (params) => (
+  <Box display="flex" gap={1}>
+    <Button
+      variant="outlined"
+      size="small"
+      startIcon={<EditIcon />}
+      onClick={() => handleEdit(params.row)}
+    >
+      Edit
+    </Button>
 
-        <Button
-          size="small"
-          color="error"
-          startIcon={<DeleteIcon />}
-          onClick={() => handleDelete(params.row._id)}
-        >
-          Delete
-        </Button>
-      </>
-    ),
+    <Button
+      variant="contained"
+      color="error"
+      size="small"
+      startIcon={<DeleteIcon />}
+      onClick={() => handleDelete(params.row._id)}
+    >
+      Delete
+    </Button>
+  </Box>
+),
   },
 ];
 
-  if (loading) {
-    return <CircularProgress />;
-  }
+ if (loading) {
+  return (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="70vh"
+    >
+      <CircularProgress size={50} />
+    </Box>
+  );
+}
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        mb={2}
-      >
-        <Typography variant="h5">
-          Employees
-        </Typography>
+    <Paper elevation={3}
+    sx={{
+    p: 4,
+    borderRadius: 4,
+    overflow: "hidden",
+  }}>
+     <Box
+  display="flex"
+  justifyContent="space-between"
+  alignItems="center"
+  mb={3}
+>
+  <Box>
+    <Typography
+      variant="h4"
+      fontWeight="700"
+    >
+      Employee Management
+    </Typography>
 
-        <Button
-          variant="contained"
-          onClick={() => setOpenDialog(true)}
-          >
-          Add Employee
-         </Button>
-      </Box>
+    <Typography color="text.secondary">
+      Manage employees, departments and roles.
+    </Typography>
+  </Box>
 
-      <TextField
-        fullWidth
-        label="Search Employee"
-        onChange={handleSearch}
-        sx={{ mb: 2 }}
-      />
+  <Button
+    variant="contained"
+    startIcon={<AddIcon />}
+    onClick={() => setOpenDialog(true)}
+    sx={{
+      borderRadius: 3,
+      px: 3,
+      py: 1,
+      textTransform: "none",
+      fontWeight: 600,
+    }}
+  >
+    Add Employee
+  </Button>
+</Box>
 
-      <DataGrid
-        autoHeight
-        rows={filteredEmployees}
-        columns={columns}
-        getRowId={(row) => row._id}
-        pageSizeOptions={[5, 10, 20]}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-      />
+  <TextField
+  fullWidth
+  placeholder="Search by name, email, department or role..."
+  onChange={handleSearch}
+  sx={{
+    mb: 3,
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 3,
+      bgcolor: "#fff",
+    },
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon />
+      </InputAdornment>
+    ),
+  }}
+/>
+<DataGrid
+  autoHeight
+  rows={filteredEmployees}
+  columns={columns}
+  getRowId={(row) => row._id}
+  pageSizeOptions={[5, 10, 20]}
+  initialState={{
+    pagination: {
+      paginationModel: {
+        pageSize: 5,
+      },
+    },
+  }}
+  sx={{
+    border: 0,
+    borderRadius: 4,
+
+    "& .MuiDataGrid-columnHeaders": {
+      backgroundColor: "#2563eb",
+      color: "#fff",
+      fontSize: 15,
+      fontWeight: "bold",
+    },
+
+    "& .MuiDataGrid-columnHeaderTitle": {
+      fontWeight: "bold",
+    },
+
+    "& .MuiDataGrid-row:hover": {
+      backgroundColor: "#f1f5f9",
+    },
+
+    "& .MuiDataGrid-cell": {
+      borderColor: "#eef2f7",
+    },
+
+    "& .MuiDataGrid-footerContainer": {
+      backgroundColor: "#fafafa",
+    },
+  }}
+/>
       
       <AddEmployeeDialog
       open={openDialog}

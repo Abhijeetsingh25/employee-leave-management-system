@@ -150,16 +150,18 @@ if (!isMatch) {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Login Successful",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+res.status(200).json({
+  success: true,
+  token,
+  user: {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isPasswordChanged: user.isPasswordChanged,
+  },
+  message: "Login Successful",
+});
 
   } catch (error) {
 
@@ -318,7 +320,7 @@ const changePassword = async (req, res) => {
     // Hash new password
     user.password = await bcrypt.hash(newPassword,10);
 
-
+   user.isPasswordChanged = true;
     await user.save();
 
 
