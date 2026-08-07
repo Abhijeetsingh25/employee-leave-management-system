@@ -1,62 +1,49 @@
 import { useEffect, useState } from "react";
 
 import {
-  Grid,
-  Paper,
   Typography,
   CircularProgress,
+  Paper,
+  Box,
+  Avatar,
+  Grid,
 } from "@mui/material";
 
 import api from "../../api/axios";
-
+import EmployeeDashboardCards from "../../components/employee/EmployeeDashboardCards";
+import RecentLeaveTable from "../../components/employee/RecentLeaveTable";
+import AttendanceChart from "../../components/employee/AttendanceChart";
+import QuickActions from "../../components/employee/QuickActions";
+import UpcomingHolidays from "../../components/employee/UpcomingHolidays";
 function Dashboard() {
-
   const [loading, setLoading] = useState(true);
 
   const [profile, setProfile] = useState({});
-
   const [leaves, setLeaves] = useState([]);
-
   const [attendance, setAttendance] = useState([]);
 
   useEffect(() => {
-
     loadData();
-
   }, []);
 
   const loadData = async () => {
-
     try {
-
       const profileRes = await api.get("/users/profile");
-
       const leaveRes = await api.get("/leaves/my-leaves");
-
       const attendanceRes = await api.get("/attendance/my");
 
       setProfile(profileRes.data.user);
-
       setLeaves(leaveRes.data.leaves);
-
       setAttendance(attendanceRes.data.attendance);
-
     } catch (error) {
-
       console.log(error);
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   if (loading) {
-
     return <CircularProgress />;
-
   }
 
   const pendingLeaves = leaves.filter(
@@ -68,99 +55,81 @@ function Dashboard() {
   ).length;
 
   return (
-
     <>
-      <Typography
-        variant="h4"
-        mb={3}
+      {/* Welcome Card */}
+
+      <Paper
+        sx={{
+          p: 4,
+          mb: 4,
+          borderRadius: 4,
+          background:
+            "linear-gradient(135deg,#1E3A8A,#2563EB)",
+          color: "#fff",
+        }}
       >
-        Welcome, {profile.name}
-      </Typography>
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={2}
+        >
+          <Avatar
+            sx={{
+              width: 65,
+              height: 65,
+              bgcolor: "#fff",
+              color: "#2563EB",
+              fontSize: 28,
+              fontWeight: "bold",
+            }}
+          >
+            {profile.name?.charAt(0)}
+          </Avatar>
 
-      <Grid container spacing={3}>
-
-        <Grid item xs={12} md={3}>
-
-          <Paper sx={{ p:3 }}>
-
-            <Typography variant="h6">
-              Leave Balance
-            </Typography>
-
+          <Box>
             <Typography
-              variant="h3"
-              color="primary"
+              variant="h4"
+              fontWeight="bold"
             >
-              {profile.leaveBalance}
+              Welcome, {profile.name}
             </Typography>
 
-          </Paper>
-
-        </Grid>
-
-        <Grid item xs={12} md={3}>
-
-          <Paper sx={{ p:3 }}>
-
-            <Typography variant="h6">
-              Pending Leaves
+            <Typography>
+              Have a productive day!
             </Typography>
+          </Box>
+        </Box>
+      </Paper>
 
-            <Typography
-              variant="h3"
-              color="warning.main"
-            >
-              {pendingLeaves}
-            </Typography>
+      {/* Dashboard Cards */}
 
-          </Paper>
+      <EmployeeDashboardCards
+        leaveBalance={profile.leaveBalance}
+        pendingLeaves={pendingLeaves}
+        approvedLeaves={approvedLeaves}
+        attendance={attendance.length}
+      />
+      <RecentLeaveTable
+      leaves={leaves}
+      />
 
-        </Grid>
+      <AttendanceChart
+     attendance={attendance}
+  />
 
-        <Grid item xs={12} md={3}>
+  <Grid container spacing={3} mt={1}>
 
-          <Paper sx={{ p:3 }}>
+  <Grid item xs={12} md={6}>
+    <QuickActions />
+  </Grid>
 
-            <Typography variant="h6">
-              Approved Leaves
-            </Typography>
+  <Grid item xs={12} md={6}>
+    <UpcomingHolidays />
+  </Grid>
 
-            <Typography
-              variant="h3"
-              color="success.main"
-            >
-              {approvedLeaves}
-            </Typography>
-
-          </Paper>
-
-        </Grid>
-
-        <Grid item xs={12} md={3}>
-
-          <Paper sx={{ p:3 }}>
-
-            <Typography variant="h6">
-              Attendance
-            </Typography>
-
-            <Typography
-              variant="h3"
-              color="secondary"
-            >
-              {attendance.length}
-            </Typography>
-
-          </Paper>
-
-        </Grid>
-
-      </Grid>
-
+</Grid>
     </>
-
   );
-
 }
 
 export default Dashboard;

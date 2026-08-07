@@ -15,7 +15,7 @@ const seedUsers = async () => {
   try {
 
     // Delete old users (Optional)
-    await User.deleteMany();
+    // await User.deleteMany();
 
     const password = await bcrypt.hash("123456", 10);
 

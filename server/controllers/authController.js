@@ -34,14 +34,19 @@ const registerUser = async (req, res) => {
     }
 
     // Check existing user
-    const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({
+  $or: [
+    { email },
+    { phone }
+  ]
+});
 
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "Email already registered",
-      });
-    }
+if (existingUser) {
+  return res.status(400).json({
+    success: false,
+    message: "Email or Phone already registered",
+  });
+}
 
     // Check employee ID
     const existingEmployee = await User.findOne({ employeeId });
@@ -101,10 +106,10 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+   const { emailOrPhone, password } = req.body;
 
     // Validation
-    if (!email || !password) {
+    if (!emailOrPhone || !password) {
       return res.status(400).json({
         success: false,
         message: "Email and Password are required",
@@ -112,24 +117,28 @@ const loginUser = async (req, res) => {
     }
 
     // Find user
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({
+  $or: [
+    { email: emailOrPhone },
+    { phone: emailOrPhone },
+  ],
+}).select("+password");
 
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid Email or Password",
-      });
-    }
+if (!user) {
+  return res.status(401).json({
+    success: false,
+    message: "Invalid credentials",
+  });
+}
 
-    // Compare Password
-    const isMatch = await bcrypt.compare(password, user.password);
+const isMatch = await bcrypt.compare(password, user.password);
 
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid Email or Password",
-      });
-    }
+if (!isMatch) {
+  return res.status(401).json({
+    success: false,
+    message: "Incorrect Password",
+  });
+}
 
     // Generate Token
     const token = generateToken(user._id);
@@ -164,9 +173,14 @@ const loginUser = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+  const { emailOrPhone } = req.body;
 
-    const user = await User.findOne({ email });
+const user = await User.findOne({
+  $or: [
+    { email: emailOrPhone },
+    { phone: emailOrPhone }
+  ]
+});
 
     if (!user) {
       return res.status(404).json({
@@ -184,7 +198,7 @@ const forgotPassword = async (req, res) => {
 
     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
 
-    await user.save();
+    await user.save({ validateBeforeSave: false });
 
    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
 
@@ -194,11 +208,12 @@ await sendEmail({
   message: `Reset your password using this link:\n\n${resetUrl}\n\nThis link expires in 15 minutes.`,
 });
 
-res.status(200).json({
+return res.status(200).json({
   success: true,
-  message: "Password reset email sent successfully",
+  message: `Password reset link sent successfully to ${user.email}`,
 });
   } catch (error) {
+    
     res.status(500).json({
       success: false,
       message: error.message,
@@ -279,7 +294,7 @@ const changePassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "If an account exists, a password reset link has been sent to the registered email.",
       });
     }
 

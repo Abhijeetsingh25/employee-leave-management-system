@@ -1,10 +1,10 @@
 import {
   Box,
+  Typography,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
 } from "@mui/material";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -34,27 +34,25 @@ const menu = [
     path: "/admin/leaves",
   },
   {
-  title: "Reports",
-  icon: <AssessmentIcon />,
-  path: "/admin/reports",
-},
+    title: "Reports",
+    icon: <AssessmentIcon />,
+    path: "/admin/reports",
+  },
   {
     title: "Attendance",
     icon: <EventNoteIcon />,
     path: "/admin/attendance",
   },
   {
-  title: "Change Password",
-  icon: <LockResetIcon />,
-  path: "/admin/change-password",
-},
+    title: "Change Password",
+    icon: <LockResetIcon />,
+    path: "/admin/change-password",
+  },
   {
     title: "Logout",
     icon: <LogoutIcon />,
     path: "/",
   },
-
-  
 ];
 
 function Sidebar() {
@@ -64,20 +62,45 @@ function Sidebar() {
     <Box
       sx={{
         width: 260,
-        bgcolor: "#1976d2",
-        color: "#fff",
         minHeight: "100vh",
+        bgcolor: "#111827",
+        color: "#fff",
+        boxShadow: "4px 0 12px rgba(0,0,0,.15)",
       }}
     >
-      <Toolbar />
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        align="center"
+        sx={{
+          py: 3,
+          borderBottom: "1px solid rgba(255,255,255,.1)",
+        }}
+      >
+        ELMS
+      </Typography>
 
-      <List>
+      <List sx={{ mt: 2 }}>
         {menu.map((item) => (
           <ListItemButton
             key={item.title}
             component={Link}
             to={item.path}
             selected={location.pathname === item.path}
+            sx={{
+              mx: 1,
+              my: .5,
+              borderRadius: 2,
+
+              "&.Mui-selected": {
+                bgcolor: "#1976d2",
+                color: "#fff",
+              },
+
+              "&:hover": {
+                bgcolor: "#1e40af",
+              },
+            }}
           >
             <ListItemIcon sx={{ color: "#fff" }}>
               {item.icon}

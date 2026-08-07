@@ -10,6 +10,7 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 
+
 function EmployeeNavbar() {
 
   const navigate = useNavigate();

@@ -11,6 +11,7 @@ import {
 
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import api from "../../api/axios";
 import { loginSuccess } from "../../features/auth/authSlice";
@@ -20,9 +21,9 @@ function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  emailOrPhone: "",
+  password: "",
+});
 
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +48,7 @@ function Login() {
         navigate("/admin/dashboard");
       } else if (data.user.role === "hr") {
         navigate("/hr/dashboard");
-      }else if(user.role === "employee"){
+      }else if(data.user.role === "employee"){
         navigate("/employee/dashboard");
       }
 
@@ -80,14 +81,14 @@ function Login() {
 
             <form onSubmit={handleSubmit}>
 
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
+             <TextField
+           fullWidth
+           margin="normal"
+           label="Email or Mobile Number"
+           name="emailOrPhone"
+           value={formData.emailOrPhone}
+           onChange={handleChange}
+           />
 
               <TextField
                 fullWidth
@@ -98,6 +99,27 @@ function Login() {
                 value={formData.password}
                 onChange={handleChange}
               />
+
+           <Box
+             sx={{
+             display: "flex",
+             justifyContent: "flex-end",
+             mt: 1,
+             mb: 2,
+            }}
+            >
+           <Link
+            to="/forgot-password"
+             style={{
+             textDecoration: "none",
+             color: "#1976d2",
+             fontWeight: 500,
+             }}
+            >
+             Forgot Password?
+           </Link>
+          </Box>
+         
 
               <Button
                 type="submit"
